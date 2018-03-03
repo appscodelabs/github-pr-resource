@@ -38,7 +38,7 @@ type Output struct {
 }
 
 func main() {
-	log.Println("out")
+	//log.Println("out")
 
 	//takes input from stdin in JSON
 	decoder := json.NewDecoder(os.Stdin)
@@ -50,8 +50,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Println(inp)
-	log.Println(os.Args[1])
+	//log.Println(inp)
+	//log.Println(os.Args[1])
 
 	//create client
 	ctx := context.Background()
@@ -67,6 +67,7 @@ func main() {
 		log.Fatal(err)
 	}
 
+	//update status of the pr
 	newStatus := &github.RepoStatus{
 		State: github.String(inp.Params.Status),
 	}
@@ -78,7 +79,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	//find pr_no
+	//find pr_no. this need to be printed to stdout
 	b, err = exec.Command("/fetch_pr.sh", os.Args[1], inp.Params.Path).Output()
 
 	if err != nil {
@@ -87,21 +88,23 @@ func main() {
 
 	num := string(b[:len(b)-1])
 
-	//get pr from api and remove label
 	id, err := strconv.Atoi(num)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Println(id)
+	//log.Println(id)
 
+	//get pr from api and remove label
 	_, err = client.Issues.RemoveLabelForIssue(context.Background(), inp.Source.Owner, inp.Source.Repo, id, inp.Source.Label)
 
 	if err != nil {
+		//TODO: thie code removes label from PR, but also shows error 404. IDK why
 		log.Println(err.Error())
 	}
 
+	//prepare output format
 	op := Output{
 		Version: Ver{
 			Ref:    ref,

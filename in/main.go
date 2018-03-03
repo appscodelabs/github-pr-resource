@@ -26,14 +26,9 @@ type Output struct {
 	Version Ver `json:"version"`
 }
 
-//type Output struct {
-//	Number string `json:"number"`
-//	Ref    string `json:"ref"`
-//} `json:"version"`
-
 func main() {
-	log.Println("in")
-	log.Println(os.Args[1])
+	//log.Println("in")
+	//log.Println(os.Args[1])
 
 	//takes input from stdin in JSON
 	decoder := json.NewDecoder(os.Stdin)
@@ -43,7 +38,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Println(inp)
+	//log.Println(inp)
 
 	//now it'll fetch the repo
 	//and place it in destination $1
@@ -56,9 +51,6 @@ func main() {
 	}
 
 	//print output
-	//	out := Output {Number: inp.Version.Number, Ref: inp.Version.Ref}
-	//	b, err = json.Marshal(out)
-
 	b, err := json.Marshal(Output{inp.Version})
 
 	if err != nil {
