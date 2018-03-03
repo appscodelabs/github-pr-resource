@@ -32,6 +32,9 @@ type Output struct {
 //} `json:"version"`
 
 func main() {
+	log.Println("in")
+	log.Println(os.Args[1])
+
 	//takes input from stdin in JSON
 	decoder := json.NewDecoder(os.Stdin)
 	var inp Input
@@ -40,10 +43,13 @@ func main() {
 		log.Fatal(err)
 	}
 
+	log.Println(inp)
+
 	//now it'll fetch the repo
 	//and place it in destination $1
 	url := "https://github.com/" + inp.Source.Owner + "/" + inp.Source.Repo
-	_, err = exec.Command("./git_script.sh", url, os.Args[1], inp.Version.Number, "pull_"+inp.Version.Ref).Output()
+	log.Println(url)
+	_, err = exec.Command("/git_script.sh", url, os.Args[1], inp.Version.Number, "pull_"+inp.Version.Ref).Output()
 
 	if err != nil {
 		log.Fatal(err)

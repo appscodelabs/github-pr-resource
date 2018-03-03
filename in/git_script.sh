@@ -4,7 +4,7 @@
 #echo $2 #dir
 #echo $3 #pull_id
 #echo $4 #ref
-[ -d $2 ] || git clone $1 $2
+git clone $1 $2
 cd $2
 git checkout master
 git pull

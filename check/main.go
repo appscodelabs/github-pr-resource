@@ -18,12 +18,14 @@ type Input struct {
 		Repo        string `json:"repo"`
 		AccessToken string `json:"access_token"`
 		Org         string `json:"org"`
+		Label       string `json:"label"`
 	} `json:"source"`
 	Version struct {
 		Ref string `json:"ref"`
 	} `json:"version"`
 }
 
+/*
 type PullReq struct {
 	Number int `json:"number"`
 	User   struct {
@@ -35,6 +37,7 @@ type PullReq struct {
 	} `json:"head"`
 	UpdatedAt string `json:"updated_at"`
 }
+*/
 
 type Output struct {
 	Number string `json:"number"`
@@ -50,7 +53,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Println(inp)
+	//log.Println(inp)
 
 	//get prs from github api
 	ctx := context.Background()
@@ -66,56 +69,74 @@ func main() {
 	}
 
 	b, err := json.Marshal(list)
-
-	var pullReq []PullReq
+	var pullReq []github.PullRequest
 
 	err = json.Unmarshal(b, &pullReq)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	for _, pr := range pullReq {
-		log.Println(pr)
-	}
+	//for _, pr := range pullReq {
+	//	log.Println(*pr.Head.SHA, *pr.UpdatedAt)
+	//}
 
 	//sort by update date
 	sort.Slice(pullReq, func(i, j int) bool {
-		return pullReq[i].UpdatedAt < pullReq[j].UpdatedAt
+		x := *pullReq[i].UpdatedAt
+		y := *pullReq[j].UpdatedAt
+		return x.Before(y)
 	})
 
 	log.Println("--------")
 	for _, pr := range pullReq {
-		log.Println(pr)
+		log.Println(*pr.Head.SHA, *pr.UpdatedAt)
 	}
 
 	//check which index matches with current version
 	index := 0
 	for i, pr := range pullReq {
-		if pr.Head.Sha == inp.Version.Ref {
+		if *pr.Head.SHA == inp.Version.Ref {
 			index = i
 			break
 		}
 	}
 	log.Println(index)
 
-	//from index to rest, go through the rest of the array and creat json output
-
 	var output []Output
+
+	//from index to rest, go through the rest of the array to filter correct prs
 	for i := index; i < len(pullReq); i++ {
-		if inp.Source.Org == "" {
-			//if source org = nil, no need to check org
-			output = append(output, Output{strconv.Itoa(pullReq[i].Number), pullReq[i].Head.Sha})
-		} else {
-			//now check user org
-			flag, _, err := client.Organizations.IsMember(context.Background(), inp.Source.Org, pullReq[i].User.Login)
+		flag := false
+		//if both is undefined, add all prs
+		if inp.Source.Org == "" && inp.Source.Label == "" {
+			flag = true
+		} else if inp.Source.Org != "" {
+			//if org is defined, first check - if user.org == inp.org
+			//if yes then add pr
+			//if no then check label
+			flag, _, err = client.Organizations.IsMember(context.Background(), inp.Source.Org, *pullReq[i].User.Login)
 			if err != nil {
 				log.Fatal(err)
 			}
-			if flag == true {
-				output = append(output, Output{strconv.Itoa(pullReq[i].Number), pullReq[i].Head.Sha})
+		}
+		if flag == false && inp.Source.Label != "" {
+			//only if label is defined
+			//if label is defined then check label
+			if flag == false && inp.Source.Label != "" {
+				for _, lab := range pullReq[i].Labels {
+					if *lab.Name == inp.Source.Label {
+						flag = true
+						break
+					}
+				}
 			}
 		}
+		//add to output
+		if flag == true {
+			output = append(output, Output{strconv.Itoa(*pullReq[i].Number), *pullReq[i].Head.SHA})
+		}
 	}
+	log.Println(output)
 
 	b, err = json.Marshal(output)
 
