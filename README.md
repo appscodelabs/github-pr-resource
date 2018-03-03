@@ -57,7 +57,7 @@ resources:
     repo: test-status
     access_token: ((access_token))
     label: ok-to-test
-    org: mozilla
+    org: your_org
 
 jobs:
 - name: test-pr
@@ -96,6 +96,9 @@ jobs:
 ## Testing the Code on Your Own Local Environment
 
 Please copy `out/find_hash.sh` `out/fetch_pr.sh` `in/git_script.sh` to your rood directory (`/`)
+
 Or,
+
 in `in/main.go`, change `exec.Command("/git_script.sh"...` to `exec.Command("./git_script.sh"...`
+
 in `out/main.go` change `exec.Command("/find_hash.sh",...` to `exec.Command("./find_hash.sh",...` and `exec.Command("/fetch_pr.sh",...` to `exec.Command("./fetch_pr.sh",...`
