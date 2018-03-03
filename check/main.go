@@ -25,20 +25,6 @@ type Input struct {
 	} `json:"version"`
 }
 
-/*
-type PullReq struct {
-	Number int `json:"number"`
-	User   struct {
-		Login string `json:"login"`
-	} `json:"user"`
-
-	Head struct {
-		Sha string `json:"sha"`
-	} `json:"head"`
-	UpdatedAt string `json:"updated_at"`
-}
-*/
-
 type Output struct {
 	Number string `json:"number"`
 	Ref    string `json:"ref"`
@@ -55,7 +41,7 @@ func main() {
 
 	//log.Println(inp)
 
-	//get prs from github api
+	//get list of prs from github api
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: inp.Source.AccessToken})
 	tc := oauth2.NewClient(ctx, ts)
@@ -76,10 +62,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	//for _, pr := range pullReq {
-	//	log.Println(*pr.Head.SHA, *pr.UpdatedAt)
-	//}
-
 	//sort by update date
 	sort.Slice(pullReq, func(i, j int) bool {
 		x := *pullReq[i].UpdatedAt
@@ -87,12 +69,8 @@ func main() {
 		return x.Before(y)
 	})
 
-	log.Println("--------")
-	for _, pr := range pullReq {
-		log.Println(*pr.Head.SHA, *pr.UpdatedAt)
-	}
-
 	//check which index matches with current version
+	//from this index to last, all refs need to be written at stdout
 	index := 0
 	for i, pr := range pullReq {
 		if *pr.Head.SHA == inp.Version.Ref {
@@ -100,7 +78,6 @@ func main() {
 			break
 		}
 	}
-	log.Println(index)
 
 	var output []Output
 
@@ -122,29 +99,27 @@ func main() {
 		if flag == false && inp.Source.Label != "" {
 			//only if label is defined
 			//if label is defined then check label
-			if flag == false && inp.Source.Label != "" {
-				for _, lab := range pullReq[i].Labels {
-					if *lab.Name == inp.Source.Label {
-						flag = true
-						break
-					}
+			for _, lab := range pullReq[i].Labels {
+				if *lab.Name == inp.Source.Label {
+					flag = true
+					break
 				}
 			}
 		}
+
 		//add to output
 		if flag == true {
 			output = append(output, Output{strconv.Itoa(*pullReq[i].Number), *pullReq[i].Head.SHA})
 		}
 	}
-	log.Println(output)
+
+	//log.Println(output)
 
 	b, err = json.Marshal(output)
 
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	log.Println("------final-----")
 
 	_, err = os.Stdout.Write(b)
 	if err != nil {
