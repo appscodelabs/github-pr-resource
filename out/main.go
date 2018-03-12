@@ -94,6 +94,14 @@ func main() {
 		log.Fatal(err)
 	}
 
+	//deubg----------------------
+	L, _, err := client.Issues.ListLabelsByIssue(context.Background(), inp.Source.Owner, inp.Source.Repo, id, nil)
+
+	if err != nil {
+		log.Println("err", err.Error())
+	}
+	//log.Println(L)
+
 	//log.Println(id)
 
 	//get pr from api and remove label
