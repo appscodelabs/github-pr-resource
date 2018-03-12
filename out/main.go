@@ -95,7 +95,7 @@ func main() {
 	}
 
 	//deubg----------------------
-	L, _, err := client.Issues.ListLabelsByIssue(context.Background(), inp.Source.Owner, inp.Source.Repo, id, nil)
+	_, _, err = client.Issues.ListLabelsByIssue(context.Background(), inp.Source.Owner, inp.Source.Repo, id, nil)
 
 	if err != nil {
 		log.Println("err", err.Error())
