@@ -11,14 +11,14 @@ resource_types:
 - name: pull-request
   type: docker-image
   source:
-    repository: tahsin/git-pull-resource
+    repository: appscode/git-pull-resource
     tag: 1.0.0
 
 ```
 
 ### Source Configuration
 
-* `owner`: *Required.* example:`tahsinrahman`
+* `owner`: *Required.* example:`appscode`
 * `repo`: *Required.* example: `concourse-git-pr-resource`
 * `access_token`: *Required.* It is needed to change the status of pr
 * `label`: Optional..
@@ -46,18 +46,18 @@ resource_types:
 - name: pull-request
   type: docker-image
   source:
-    repository: tahsin/git-pull-resource
+    repository: appscode/git-pull-resource
     tag: 1.0.0
 
 resources:
 - name: pull-request
   type: pull-request
   source:
-    owner: tahsinrahman
-    repo: test-status
+    owner: appscode
+    repo: guard
     access_token: ((access_token))
     label: ok-to-test
-    org: your_org
+    org: appscode
 
 jobs:
 - name: test-pr
@@ -79,8 +79,8 @@ jobs:
       inputs:
       - name: pull-request
       run:
-        path: pull-request/ci/test.sh
-        args: []
+        path: echo
+        args: ["hello world"]
     on_success:
       put: pull-request
       params:
