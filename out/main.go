@@ -86,6 +86,10 @@ func main() {
 		log.Fatal(err)
 	}
 
+	if len(b) == 0 {
+		log.Fatal("Commit Squashed")
+	}
+
 	num := string(b[:len(b)-1])
 
 	id, err := strconv.Atoi(num)
