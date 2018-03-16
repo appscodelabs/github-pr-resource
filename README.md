@@ -1,3 +1,9 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/appscode/concourse-git-pr-resource)](https://goreportcard.com/report/github.com/appscode/concourse-git-pr-resource)
+[![Build Status](https://travis-ci.org/appscode/concourse-git-pr-resource.svg?branch=master)](https://travis-ci.org/appscode/concourse-git-pr-resource)
+[![codecov](https://codecov.io/gh/appscode/concourse-git-pr-resource/branch/master/graph/badge.svg)](https://codecov.io/gh/appscode/concourse-git-pr-resource)
+[![Docker Pulls](https://img.shields.io/docker/pulls/appscode/concourse-git-pr-resource.svg)](https://hub.docker.com/r/appscode/concourse-git-pr-resource/)
+[![Slack](https://slack.appscode.com/badge.svg)](https://slack.appscode.com)
+[![Twitter](https://img.shields.io/twitter/follow/appscodehq.svg?style=social&logo=twitter&label=Follow)](https://twitter.com/intent/follow?screen_name=AppsCodeHQ)
 # Concourse-ci Resource for Git Pull Requests
 
 This resource can check for new pull requests and run test on them. After finishing tests, it can update status to pending, success or failure.
