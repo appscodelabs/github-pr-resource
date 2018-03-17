@@ -1,4 +1,4 @@
-package: github.com/appscode/concourse-git-pr-resource
+package: github.com/appscodelabs/github-pr-resource
 import:
 - package: github.com/google/go-github
   version: d2b80df1e3eeccae96eb1cb489e65372cc9550c8

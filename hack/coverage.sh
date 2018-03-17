@@ -2,7 +2,7 @@
 set -eou pipefail
 
 GOPATH=$(go env GOPATH)
-REPO_ROOT="$GOPATH/src/github.com/appscode/concourse-git-pr-resource"
+REPO_ROOT="$GOPATH/src/github.com/appscodelabs/github-pr-resource"
 
 pushd $REPO_ROOT
 

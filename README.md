@@ -1,7 +1,7 @@
-[![Go Report Card](https://goreportcard.com/badge/github.com/appscode/concourse-git-pr-resource)](https://goreportcard.com/report/github.com/appscode/concourse-git-pr-resource)
-[![Build Status](https://travis-ci.org/appscode/concourse-git-pr-resource.svg?branch=master)](https://travis-ci.org/appscode/concourse-git-pr-resource)
-[![codecov](https://codecov.io/gh/appscode/concourse-git-pr-resource/branch/master/graph/badge.svg)](https://codecov.io/gh/appscode/concourse-git-pr-resource)
-[![Docker Pulls](https://img.shields.io/docker/pulls/appscode/concourse-git-pr-resource.svg)](https://hub.docker.com/r/appscode/concourse-git-pr-resource/)
+[![Go Report Card](https://goreportcard.com/badge/github.com/appscodelabs/github-pr-resource)](https://goreportcard.com/report/github.com/appscodelabs/github-pr-resource)
+[![Build Status](https://travis-ci.org/appscodelabs/github-pr-resource.svg?branch=master)](https://travis-ci.org/appscodelabs/github-pr-resource)
+[![codecov](https://codecov.io/gh/appscodelabs/github-pr-resource/branch/master/graph/badge.svg)](https://codecov.io/gh/appscodelabs/github-pr-resource)
+[![Docker Pulls](https://img.shields.io/docker/pulls/appscodelabs/github-pr-resource.svg)](https://hub.docker.com/r/appscodelabs/github-pr-resource/)
 [![Slack](https://slack.appscode.com/badge.svg)](https://slack.appscode.com)
 [![Twitter](https://img.shields.io/twitter/follow/appscodehq.svg?style=social&logo=twitter&label=Follow)](https://twitter.com/intent/follow?screen_name=AppsCodeHQ)
 # Concourse-ci Resource for Git Pull Requests
@@ -17,7 +17,7 @@ resource_types:
 - name: pull-request
   type: docker-image
   source:
-    repository: appscode/git-pull-resource
+    repository: appscodelabs/github-pr-resource
     tag: 1.0.0
 
 ```
@@ -25,7 +25,7 @@ resource_types:
 ### Source Configuration
 
 * `owner`: *Required.* example:`appscode`
-* `repo`: *Required.* example: `concourse-git-pr-resource`
+* `repo`: *Required.* example: `github-pr-resource`
 * `access_token`: *Required.* It is needed to change the status of pr
 * `label`: Optional..
 * `org`: Optional.
@@ -52,7 +52,7 @@ resource_types:
 - name: pull-request
   type: docker-image
   source:
-    repository: appscode/git-pull-resource
+    repository: appscodelabs/github-pr-resource
     tag: 1.0.0
 
 resources:
