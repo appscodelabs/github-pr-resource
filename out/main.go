@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -61,10 +63,15 @@ func main() {
 	client := github.NewClient(tc)
 
 	//get ref header from directory
-	b, err := exec.Command("/find_hash.sh", os.Args[1], inp.Params.Path).Output()
+	cmd := exec.Command("/find_hash.sh", os.Args[1], inp.Params.Path)
+
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+
+	b, err := cmd.Output()
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(fmt.Sprint(err) + " : " + stderr.String())
 	}
 
 	//update status of the pr
@@ -80,10 +87,13 @@ func main() {
 	}
 
 	//find pr_no. this need to be printed to stdout
-	b, err = exec.Command("/fetch_pr.sh", os.Args[1], inp.Params.Path).Output()
+	cmd = exec.Command("/fetch_pr.sh", os.Args[1], inp.Params.Path)
+	cmd.Stderr = &stderr
+
+	b, err = cmd.Output()
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(fmt.Sprint(err) + " : " + stderr.String())
 	}
 
 	if len(b) == 0 {

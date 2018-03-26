@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -44,10 +46,15 @@ func main() {
 	//and place it in destination $1
 	url := "https://github.com/" + inp.Source.Owner + "/" + inp.Source.Repo
 	log.Println(url)
-	_, err = exec.Command("/git_script.sh", url, os.Args[1], inp.Version.Number, "pull_"+inp.Version.Ref).Output()
+
+	cmd := exec.Command("/git_script.sh", url, os.Args[1], inp.Version.Number, "pull_"+inp.Version.Ref)
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+
+	err = cmd.Run()
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(fmt.Sprint(err) + " : " + stderr.String())
 	}
 
 	//print output
