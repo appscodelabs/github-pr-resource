@@ -48,19 +48,16 @@ func main() {
 
 	client := github.NewClient(tc)
 
-	list, _, err := client.PullRequests.List(context.Background(), inp.Source.Owner, inp.Source.Repo, nil)
+	pullReq, _, err := client.PullRequests.List(context.Background(), inp.Source.Owner, inp.Source.Repo, nil)
 
-	if err != nil {
-		log.Fatal(err)
-	}
+	//	log.Println("list")
+	//	for i, pr := range list {
+	//		log.Println(i, pr)
+	//	}
 
-	b, err := json.Marshal(list)
-	var pullReq []github.PullRequest
-
-	err = json.Unmarshal(b, &pullReq)
-	if err != nil {
-		log.Fatal(err)
-	}
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
 
 	//sort by update date
 	sort.Slice(pullReq, func(i, j int) bool {
@@ -78,11 +75,13 @@ func main() {
 			break
 		}
 	}
+	//log.Println(index)
 
 	var output []Output
 
 	//from index to rest, go through the rest of the array to filter correct prs
 	for i := index; i < len(pullReq); i++ {
+		//log.Println(i, *pullReq[i].User.Login)
 		flag := false
 		//if both is undefined, add all prs
 		if inp.Source.Org == "" && inp.Source.Label == "" {
@@ -92,6 +91,7 @@ func main() {
 			//if yes then add pr
 			//if no then check label
 			flag, _, err = client.Organizations.IsMember(context.Background(), inp.Source.Org, *pullReq[i].User.Login)
+			//log.Println(flag)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -114,8 +114,12 @@ func main() {
 	}
 
 	//log.Println(output)
+	//	log.Println("PR")
+	//	for i, pr := range pullReq {
+	//		log.Println(i, pr)
+	//	}
 
-	b, err = json.Marshal(output)
+	b, err := json.Marshal(output)
 
 	if err != nil {
 		log.Fatal(err)

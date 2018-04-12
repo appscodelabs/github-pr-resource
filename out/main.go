@@ -74,9 +74,22 @@ func main() {
 		log.Fatal(fmt.Sprint(err) + " : " + stderr.String())
 	}
 
+	ATC_EXTERNAL_URL := os.Getenv("ATC_EXTERNAL_URL")
+	BUILD_TEAM_NAME := os.Getenv("BUILD_TEAM_NAME")
+	BUILD_PIPELINE_NAME := os.Getenv("BUILD_PIPELINE_NAME")
+	BUILD_JOB_NAME := os.Getenv("BUILD_JOB_NAME")
+	BUILD_NAME := os.Getenv("BUILD_NAME")
+
+	targetURL := ATC_EXTERNAL_URL + "/teams/" + BUILD_TEAM_NAME + "/pipelines/" + BUILD_PIPELINE_NAME + "/jobs/" + BUILD_JOB_NAME + "/builds/" + BUILD_NAME
+	description := "concourse-ci build : " + inp.Params.Status
+	gitContext := "concourse-ci"
+
 	//update status of the pr
 	newStatus := &github.RepoStatus{
-		State: github.String(inp.Params.Status),
+		State:       github.String(inp.Params.Status),
+		TargetURL:   &targetURL,
+		Description: &description,
+		Context:     &gitContext,
 	}
 
 	ref := string(b[:len(b)-1])
