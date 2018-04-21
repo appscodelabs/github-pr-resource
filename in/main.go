@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -27,10 +29,7 @@ type Output struct {
 }
 
 func main() {
-	//log.Println("in")
-	//log.Println(os.Args[1])
-
-	//takes input from stdin in JSON
+	//takes JSON input from stdin
 	decoder := json.NewDecoder(os.Stdin)
 	var inp Input
 	err := decoder.Decode(&inp)
@@ -38,16 +37,19 @@ func main() {
 		log.Fatal(err)
 	}
 
-	//log.Println(inp)
-
 	//now it'll fetch the repo
 	//and place it in destination $1
 	url := "https://github.com/" + inp.Source.Owner + "/" + inp.Source.Repo
 	log.Println(url)
-	_, err = exec.Command("/git_script.sh", url, os.Args[1], inp.Version.Number, "pull_"+inp.Version.Ref).Output()
+
+	cmd := exec.Command("/git_script.sh", url, os.Args[1], inp.Version.Number)
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+
+	err = cmd.Run()
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(fmt.Sprint(err) + " : " + stderr.String())
 	}
 
 	//print output

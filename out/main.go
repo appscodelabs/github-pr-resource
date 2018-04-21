@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -13,8 +15,9 @@ import (
 )
 
 type P struct {
-	Status string `json:"status"`
-	Path   string `json:"path"`
+	Status  string `json:"status"`
+	Context string `json:"context"`
+	Path    string `json:"path"`
 }
 
 type Input struct {
@@ -38,8 +41,6 @@ type Output struct {
 }
 
 func main() {
-	//log.Println("out")
-
 	//takes input from stdin in JSON
 	decoder := json.NewDecoder(os.Stdin)
 
@@ -50,9 +51,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	//log.Println(inp)
-	//log.Println(os.Args[1])
-
 	//create client
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: inp.Source.AccessToken})
@@ -61,18 +59,36 @@ func main() {
 	client := github.NewClient(tc)
 
 	//get ref header from directory
-	b, err := exec.Command("/find_hash.sh", os.Args[1], inp.Params.Path).Output()
+	cmd := exec.Command("/find_hash.sh", os.Args[1], inp.Params.Path)
+
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+
+	b, err := cmd.Output()
 
 	if err != nil {
-		log.Fatal(err)
-	}
-
-	//update status of the pr
-	newStatus := &github.RepoStatus{
-		State: github.String(inp.Params.Status),
+		log.Fatal(fmt.Sprint(err) + " : " + stderr.String())
 	}
 
 	ref := string(b[:len(b)-1])
+
+	ATC_EXTERNAL_URL := os.Getenv("ATC_EXTERNAL_URL")
+	BUILD_TEAM_NAME := os.Getenv("BUILD_TEAM_NAME")
+	BUILD_PIPELINE_NAME := os.Getenv("BUILD_PIPELINE_NAME")
+	BUILD_JOB_NAME := os.Getenv("BUILD_JOB_NAME")
+	BUILD_NAME := os.Getenv("BUILD_NAME")
+
+	targetURL := ATC_EXTERNAL_URL + "/teams/" + BUILD_TEAM_NAME + "/pipelines/" + BUILD_PIPELINE_NAME + "/jobs/" + BUILD_JOB_NAME + "/builds/" + BUILD_NAME
+	description := "concourse-ci build : " + inp.Params.Status
+	gitContext := "concourse-ci " + BUILD_JOB_NAME + " " + BUILD_NAME
+
+	//update status of the pr
+	newStatus := &github.RepoStatus{
+		State:       github.String(inp.Params.Status),
+		TargetURL:   &targetURL,
+		Description: &description,
+		Context:     &gitContext,
+	}
 
 	_, _, err = client.Repositories.CreateStatus(context.Background(), inp.Source.Owner, inp.Source.Repo, ref, newStatus)
 	if err != nil {
@@ -80,10 +96,13 @@ func main() {
 	}
 
 	//find pr_no. this need to be printed to stdout
-	b, err = exec.Command("/fetch_pr.sh", os.Args[1], inp.Params.Path).Output()
+	cmd = exec.Command("/fetch_pr.sh", os.Args[1], inp.Params.Path)
+	cmd.Stderr = &stderr
+
+	b, err = cmd.Output()
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(fmt.Sprint(err) + " : " + stderr.String())
 	}
 
 	if len(b) == 0 {
@@ -98,15 +117,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	//deubg----------------------
-	_, _, err = client.Issues.ListLabelsByIssue(context.Background(), inp.Source.Owner, inp.Source.Repo, id, nil)
+	//_, _, err = client.Issues.ListLabelsByIssue(context.Background(), inp.Source.Owner, inp.Source.Repo, id, nil)
 
-	if err != nil {
-		log.Println("err", err.Error())
-	}
-	//log.Println(L)
-
-	//log.Println(id)
+	//if err != nil {
+	//	log.Println("err", err.Error())
+	//}
 
 	//get pr from api and remove label
 	_, err = client.Issues.RemoveLabelForIssue(context.Background(), inp.Source.Owner, inp.Source.Repo, id, inp.Source.Label)
