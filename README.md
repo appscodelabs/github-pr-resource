@@ -17,8 +17,8 @@ resource_types:
 - name: pull-request
   type: docker-image
   source:
-    repository: appscodelabs/github-pr-resource
-    tag: 1.0.0
+    repository: appscodeci/github-pr-resource
+    tag: latest
 
 ```
 
@@ -52,8 +52,8 @@ resource_types:
 - name: pull-request
   type: docker-image
   source:
-    repository: appscodelabs/github-pr-resource
-    tag: 1.0.0
+    repository: appscodeci/github-pr-resource
+    tag: latest
 
 resources:
 - name: pull-request
