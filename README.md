@@ -1,7 +1,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/appscodelabs/github-pr-resource)](https://goreportcard.com/report/github.com/appscodelabs/github-pr-resource)
 [![Build Status](https://travis-ci.org/appscodelabs/github-pr-resource.svg?branch=master)](https://travis-ci.org/appscodelabs/github-pr-resource)
 [![codecov](https://codecov.io/gh/appscodelabs/github-pr-resource/branch/master/graph/badge.svg)](https://codecov.io/gh/appscodelabs/github-pr-resource)
-[![Docker Pulls](https://img.shields.io/docker/pulls/appscodelabs/github-pr-resource.svg)](https://hub.docker.com/r/appscodelabs/github-pr-resource/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/appscodeci/github-pr-resource.svg)](https://hub.docker.com/r/appscodeci/github-pr-resource/)
 [![Slack](https://slack.appscode.com/badge.svg)](https://slack.appscode.com)
 [![Twitter](https://img.shields.io/twitter/follow/appscodehq.svg?style=social&logo=twitter&label=Follow)](https://twitter.com/intent/follow?screen_name=AppsCodeHQ)
 # Concourse-ci Resource for Git Pull Requests
