@@ -39,8 +39,7 @@ func main() {
 
 	//now it'll fetch the repo
 	//and place it in destination $1
-	url := "https://github.com/" + inp.Source.Owner + "/" + inp.Source.Repo
-	log.Println(url)
+	url := "https://" + inp.Source.AccessToken + "@github.com/" + inp.Source.Owner + "/" + inp.Source.Repo
 
 	cmd := exec.Command("/git_script.sh", url, os.Args[1], inp.Version.Number)
 	var stderr bytes.Buffer
